@@ -10,6 +10,14 @@
 //
 // Use only what you learned! No loops yet, so you'll have to use recursion!
 
+fn factorial(num: u32) -> u32 {
+    match num {
+        0 => 1,
+        1 => 1,
+        _ => factorial(num - 1) * num
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::factorial;

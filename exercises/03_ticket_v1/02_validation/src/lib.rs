@@ -4,20 +4,57 @@ struct Ticket {
     status: String,
 }
 
+enum Status {
+    Todo,
+    InProgress,
+    Done,
+}
+
+impl Status {
+    fn as_str(&self) -> String {
+        match self {
+            Status::Done => "Done".to_string(),
+            Status::Todo => "To-Do".to_string(),
+            Status::InProgress => "In Progress".to_string(),
+        }
+    }
+
+    fn try_from(value: &String) -> Result<Self, ()> {
+        let converted = value.as_str();
+
+        match converted {
+            "Done" => Ok(Status::Done),
+            "To-Do" => Ok(Status::Done),
+            "In Progress" => Ok(Status::Done),
+            _ => Err(()),
+        }
+    }
+}
+
 impl Ticket {
-    // TODO: implement the `new` function.
-    //  The following requirements should be met:
-    //   - Only `To-Do`, `In Progress`, and `Done` statuses are allowed.
-    //   - The `title` and `description` fields should not be empty.
-    //   - the `title` should be at most 50 bytes long.
-    //   - the `description` should be at most 500 bytes long.
-    //  The method should panic if any of the requirements are not met.
-    //
-    // You'll have to use what you learned in the previous exercises,
-    // as well as some `String` methods. Use the documentation of Rust's standard library
-    // to find the most appropriate options -> https://doc.rust-lang.org/std/string/struct.String.html
-    fn new(title: String, description: String, status: String) -> Self {
-        todo!();
+    pub fn new(title: String, description: String, status: String) -> Self {
+        if title.len() == 0 {
+            panic!("Title cannot be empty")
+        }
+
+        if title.len() > 50 {
+            panic!("Title cannot be longer than 50 bytes")
+        }
+
+        if description.len() == 0 {
+            panic!("Description cannot be empty")
+        }
+
+        if description.len() > 500 {
+            panic!("Description cannot be longer than 500 bytes")
+        }
+
+        let status_res = Status::try_from(&status);
+
+        if status_res.is_err() {
+            panic!("Only `To-Do`, `In Progress`, and `Done` statuses are allowed")
+        }
+
         Self {
             title,
             description,
