@@ -6,11 +6,13 @@
 // You also need to add a `get` method that takes as input a `TicketId`
 // and returns an `Option<&Ticket>`.
 
+use std::ops::{Add, AddAssign};
 use ticket_fields::{TicketDescription, TicketTitle};
 
 #[derive(Clone)]
 pub struct TicketStore {
     tickets: Vec<Ticket>,
+    last_certified_id: u64,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -41,11 +43,32 @@ impl TicketStore {
     pub fn new() -> Self {
         Self {
             tickets: Vec::new(),
+            last_certified_id: 0,
         }
     }
 
-    pub fn add_ticket(&mut self, ticket: Ticket) {
-        self.tickets.push(ticket);
+    pub fn create_ticket_id(&mut self) -> u64 {
+        &self.last_certified_id.add_assign(1);
+        self.last_certified_id
+    }
+
+    pub fn add_ticket(&mut self, ticket: TicketDraft) -> TicketId {
+        let ticket_id = TicketId(Self::create_ticket_id(self));
+
+        self.tickets.push(Ticket {
+            id: ticket_id.clone(),
+            title: ticket.title,
+            description: ticket.description,
+            status: Status::ToDo,
+        });
+
+        ticket_id
+    }
+
+    pub fn get(&self, ticket_id: TicketId) -> Option<Ticket> {
+        self.clone().tickets
+            .into_iter()
+            .find(|ticket| ticket.id.0 == ticket_id.0)
     }
 }
 
@@ -72,6 +95,7 @@ mod tests {
             title: ticket_title(),
             description: ticket_description(),
         };
+
         let id2 = store.add_ticket(draft2);
         let ticket2 = store.get(id2).unwrap();
 
