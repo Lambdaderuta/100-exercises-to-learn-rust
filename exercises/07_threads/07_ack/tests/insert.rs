@@ -12,6 +12,7 @@ fn insert_works() {
         title: ticket_title(),
         description: ticket_description(),
     };
+
     let command = Command::Insert {
         draft: draft.clone(),
         response_sender,

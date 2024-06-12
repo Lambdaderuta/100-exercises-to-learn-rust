@@ -13,9 +13,29 @@
 // vectors for each half of the original vector. We'll see why
 // this is necessary in the next exercise.
 use std::thread;
+use std::thread::JoinHandle;
 
 pub fn sum(v: Vec<i32>) -> i32 {
-    todo!()
+    if v.len() < 2 {
+        return v.iter().sum()
+    }
+
+    let mid = v.len().div_ceil(2);
+
+    let (first, second) = v.split_at(mid);
+
+    let first_half = first.to_vec();
+    let second_half = second.to_vec();
+
+    let handle1: JoinHandle<i32> = thread::spawn(move || {
+        first_half.into_iter().sum()
+    });
+
+    let handle2: JoinHandle<i32> = thread::spawn(move || {
+        second_half.into_iter().sum()
+    });
+
+    handle1.join().unwrap() + handle2.join().unwrap()
 }
 
 #[cfg(test)]
