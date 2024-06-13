@@ -5,3 +5,7 @@ edition = "2021"
 
 [dependencies]
 tokio = { version = "1", features = ["full"] }
+serde = { version = "1.0.203", features = ["derive"] }
+axum = { version = "0.7.5" }
+ticket_fields = { path = "../../../helpers/ticket_fields" }
+axum-macros = "0.4.1"
